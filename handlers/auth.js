@@ -40,7 +40,7 @@ exports.signUp = async function (req, res) {
       await user_.save();
 
       // const token = user_.generateAuthToken();
-      await Mailer.sendVerifyEmail(user_, user_.verification.otp);
+      // await Mailer.sendVerifyEmail(user_, user_.verification.otp);
 
       res
         .status(200)
@@ -65,13 +65,11 @@ exports.SignIn = async function (req, res) {
         } else {
           await Mailer.sendVerifyEmail(user_, user_.verification.otp);
 
-          res
-            .status(200)
-            .json({
-              token: null,
-              user_,
-              message: "Please verify your account",
-            });
+          res.status(200).json({
+            token: null,
+            user_,
+            message: "Please verify your account",
+          });
         }
       } else {
         res.status(401).json({ message: "Invalid password" });
