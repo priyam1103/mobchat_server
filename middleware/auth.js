@@ -8,7 +8,7 @@ module.exports = async function (req, res, next) {
       res.status(401).json({ message: "Please login to continue" });
     }
     const token = await req.headers.authorization.split(" ")[1];
-    console.log(token);
+
     if (!token) {
       res.status(401).json({ message: "Please login to continue" });
     }
@@ -20,7 +20,6 @@ module.exports = async function (req, res, next) {
     res.locals = user;
     next();
   } catch (err) {
-    console.log(err);
     res.status(400).json({ message: "Please try again later" });
   }
 };

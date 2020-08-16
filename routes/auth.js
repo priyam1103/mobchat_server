@@ -13,8 +13,8 @@ const auth = require("../middleware/auth");
 route.post("/signup", signUp);
 route.post("/signin", SignIn);
 route.post("/verify", verifyUser);
-route.post("resetPassToken", ResetPassToken);
-route.get("/resetPassVerify", ResetTokenVerify);
+route.post("/resetPassToken", ResetPassToken);
+route.get("/resetPassVerify/:resetToken", ResetTokenVerify);
 route.post("/resetPassword", ResetPass);
 route.get("/me", auth, me);
 

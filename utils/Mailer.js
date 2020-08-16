@@ -3,7 +3,7 @@
 const nodemailer = require("nodemailer");
 // const path = require("path");
 
-const { config } = require("../service/config");
+const config = require("../service/config");
 
 class Mailer {
   constructor() {
@@ -12,33 +12,32 @@ class Mailer {
   }
 
   _createTransport() {
-    // if (config.DEV_ENV) {
-    nodemailer.createTestAccount().then((account) => {
+    if (config.DEV_ENV) {
+      nodemailer.createTestAccount().then((account) => {
+        this.transport = nodemailer.createTransport({
+          host: account.smtp.host,
+          port: account.smtp.port,
+          secure: account.smtp.secure,
+          auth: {
+            user: account.user,
+            pass: account.pass,
+          },
+        });
+        this.user = account.user;
+      });
+    } else {
       this.transport = nodemailer.createTransport({
-        host: account.smtp.host,
-        port: account.smtp.port,
-        secure: account.smtp.secure,
+        host: config.TRANSPORT_HOST,
+        port: config.TRANSPORT_PORT,
+        secure: true,
         auth: {
-          user: account.user,
-          pass: account.pass,
+          user: config.TRANSPORT_AUTH_USER,
+          pass: config.TRANSPORT_AUTH_PASS,
         },
       });
-      this.user = account.user;
-    });
+      this.user = config.TRANSPORT_AUTH_USER;
+    }
   }
-  //     } else {
-  //       this.transport = nodemailer.createTransport({
-  //         host: config.TRANSPORT.HOST,
-  //         port: config.TRANSPORT.PORT,
-  //         secure: config.TRANSPORT.PORT === 465,
-  //         auth: {
-  //           user: config.TRANSPORT.AUTH.USER,
-  //           pass: config.TRANSPORT.AUTH.PASS,
-  //         },
-  //       });
-  //       this.user = config.TRANSPORT.AUTH.USER;
-  //     }
-  //   }
 
   async _getTestAccount() {
     const testAccount = await nodemailer.createTestAccount();
@@ -68,15 +67,15 @@ class Mailer {
         .sendMail({
           from: `"Mob Chat" <${this.user}>`,
           to: user.emailId,
-          subject: "Welcome to bolo! Confirm Your Email",
+          subject: "Welcome to mobchat! Please find your otp below",
           text: `You're on your way! Let's confirm your email address.`,
-          html: `<p>${otp}</p>`,
+          html: `<p>You otp is ${otp}</p>`,
         })
         .then((info) => {
-          //   if (config.DEV_ENV) {
-          const testEmailURL = nodemailer.getTestMessageUrl(info);
-          console.log(`Test email URL: ${testEmailURL}`);
-          //   }
+          if (config.DEV_ENV) {
+            const testEmailURL = nodemailer.getTestMessageUrl(info);
+            console.log(`Test email URL: ${testEmailURL}`);
+          }
           resolve();
           return;
         })
@@ -101,17 +100,17 @@ class Mailer {
           to: user.emailId,
           subject: "Password reset link",
           text: `You're on your way! Let's reset your password.`,
-          html: `${config.ALLOWED_URL}/reset-password?token=${token}`,
+          html: `http://localhost:3000/reset-password?token=${token}`,
         })
         .then((info) => {
-          //if (config.DEV_ENV) {
-          const testEmailURL = nodemailer.getTestMessageUrl(info);
-          console.log(`Test email URL: ${testEmailURL}`);
-          //  }
+          if (config.DEV_ENV) {
+            const testEmailURL = nodemailer.getTestMessageUrl(info);
+            console.log(`Test email URL: ${testEmailURL}`);
+          }
           resolve();
           return;
         })
-        .catch(() => {
+        .catch((err) => {
           reject(new Error("Unable to send email at the moment."));
           return;
         });

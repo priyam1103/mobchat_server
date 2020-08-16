@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
+const { v4: uuidv4 } = require("uuid");
 const config = require("../service/config");
 const UserSchema = new mongoose.Schema(
   {
@@ -30,7 +31,7 @@ const UserSchema = new mongoose.Schema(
     verification: {
       otp: {
         type: String,
-        default: () => crypto.randomBytes(6).toString("hex"),
+        default: () => Math.floor(100000 + Math.random() * 900000),
       },
     },
     resetPassword: {
@@ -42,6 +43,10 @@ const UserSchema = new mongoose.Schema(
         type: Date,
         default: null,
       },
+    },
+    socketId: {
+      type: String,
+      default: null,
     },
   },
   { timestamps: true }
