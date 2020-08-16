@@ -18,7 +18,10 @@ connectDb().then(() => {
 });
 
 const jwt = require("jsonwebtoken");
-
+io.configure(function () {
+  io.set("transports", ["xhr-polling"]);
+  io.set("polling duration", 10);
+});
 io.use(async (socket, next) => {
   try {
     const token = socket.handshake.query.token;
