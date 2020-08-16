@@ -18,7 +18,7 @@ connectDb().then(() => {
 });
 
 const jwt = require("jsonwebtoken");
-const { updateOne } = require("./model/user");
+
 io.use(async (socket, next) => {
   try {
     const token = socket.handshake.query.token;
