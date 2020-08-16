@@ -101,7 +101,7 @@ class Mailer {
           to: user.emailId,
           subject: "Password reset link",
           text: `You're on your way! Let's reset your password.`,
-          html: `http://localhost:3000/reset-password?token=${token}`,
+          html: `https://mobchat.netlify.app/reset-password?token=${token}`,
         })
         .then((info) => {
           if (config.DEV_ENV) {
