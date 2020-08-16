@@ -79,7 +79,8 @@ class Mailer {
           resolve();
           return;
         })
-        .catch(() => {
+        .catch((err) => {
+          console.log(err);
           reject(new Error("Unable to send email at the moment."));
           return;
         });

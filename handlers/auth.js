@@ -40,7 +40,7 @@ exports.signUp = async function (req, res) {
       await user_.save();
 
       // const token = user_.generateAuthToken();
-      // await Mailer.sendVerifyEmail(user_, user_.verification.otp);
+      await Mailer.sendVerifyEmail(user_, user_.verification.otp);
 
       res
         .status(200)
