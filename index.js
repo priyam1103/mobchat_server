@@ -8,20 +8,16 @@ const config = require("./service/config");
 const { connectDb } = require("./service/db");
 app.use(cors());
 require("./service/routes")(app);
-const server = http.createServer(app);
-const io = require("socket.io")(server);
 
-connectDb().then(() => {
+const server = connectDb().then(() => {
   server.listen(config.PORT, () => {
     console.log(`Connected to port ${config.PORT}`);
   });
 });
+const io = require("socket.io")(server);
 
 const jwt = require("jsonwebtoken");
-io.configure(function () {
-  io.set("transports", ["xhr-polling"]);
-  io.set("polling duration", 10);
-});
+
 io.use(async (socket, next) => {
   try {
     const token = socket.handshake.query.token;
