@@ -8,13 +8,14 @@ const config = require("./service/config");
 const { connectDb } = require("./service/db");
 app.use(cors());
 require("./service/routes")(app);
+const server = http.createServer(app);
+const io = require("socket.io")(server);
 
-const server = connectDb().then(() => {
-  app.listen(config.PORT, () => {
+connectDb().then(() => {
+  server.listen(config.PORT, () => {
     console.log(`Connected to port ${config.PORT}`);
   });
 });
-const io = require("socket.io")(server);
 
 const jwt = require("jsonwebtoken");
 
