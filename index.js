@@ -10,7 +10,7 @@ app.use(cors());
 require("./service/routes")(app);
 
 const server = connectDb().then(() => {
-  server.listen(config.PORT, () => {
+  app.listen(config.PORT, () => {
     console.log(`Connected to port ${config.PORT}`);
   });
 });
