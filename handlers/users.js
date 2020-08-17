@@ -3,7 +3,10 @@ const User = require("../model/user");
 exports.getUsers = async function (req, res) {
   try {
     const user = res.locals._id;
-    const users = await User.find({ _id: { $ne: user } });
+    const users = await User.find(
+      { _id: { $ne: user } },
+      { verified: { $ne: false } }
+    );
     if (users) {
       res.status(200).json({ users });
     } else {
