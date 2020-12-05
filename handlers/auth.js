@@ -197,7 +197,7 @@ exports.ResetPassToken = async function (req, res) {
       // await Mailer.sendResetPassword(user, resetToken);
       client.send(
         {
-          text: `https://mobchat.netlify.app/reset-password?token=${resetToken}`,
+          text: `https://mobchat-kappa.vercel.app/reset-password/${resetToken}`,
           from: 'Mob chat',
           to: user.emailId,
           subject: 'testing emailjs',
