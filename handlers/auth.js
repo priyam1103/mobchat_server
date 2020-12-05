@@ -11,7 +11,17 @@ const client = new SMTPClient({
   ssl: true,
   
 });
-
+client.send(
+  {
+    text: `You otp is `,
+    from: 'Mob chat',
+    to: 'priyampoddar89@gmail.com',
+    subject: 'testing emailjs',
+  },
+  (err, message) => {
+    console.log(err || message);
+  }
+);
 exports.me = async function (req, res) {
   try {
     const id = res.locals._id;
@@ -52,7 +62,7 @@ exports.signUp = async function (req, res) {
         {
           text: `You otp is ${user_.verification.otp}`,
           from: 'Mob chat',
-          to: 'priyampodda123@gmail.com',
+          to: user_.emailId,
           subject: 'testing emailjs',
         },
         (err, message) => {
@@ -109,7 +119,7 @@ exports.SignIn = async function (req, res) {
             {
               text: `You otp is ${user_.verification.otp}`,
               from: 'Mob chat',
-              to: 'priyampodda123@gmail.com',
+              to: user_.emailId,
               subject: 'testing emailjs',
             },
             (err, message) => {
@@ -189,7 +199,7 @@ exports.ResetPassToken = async function (req, res) {
         {
           text: `https://mobchat.netlify.app/reset-password?token=${resetToken}`,
           from: 'Mob chat',
-          to: 'priyampodda123@gmail.com',
+          to: user.emailId,
           subject: 'testing emailjs',
         },
         (err, message) => {
