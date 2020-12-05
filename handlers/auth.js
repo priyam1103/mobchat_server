@@ -2,7 +2,16 @@ const User = require("../model/user");
 const bcrypt = require("bcrypt");
 const Mailer = require("../utils/Mailer");
 const config = require("../service/config");
+const { SMTPClient } = require('emailjs');
 const nodemailer = require("nodemailer");
+const client = new SMTPClient({
+	user: config.TRANSPORT_AUTH_USER,
+	password: config.TRANSPORT_AUTH_PASS,
+	host: 'smtp.gmail.com',
+  ssl: true,
+  
+});
+
 exports.me = async function (req, res) {
   try {
     const id = res.locals._id;
@@ -39,30 +48,40 @@ exports.signUp = async function (req, res) {
         mobileNo: mobileNo,
       });
       await user_.save();
-
-      // const token = user_.generateAuthToken();
-      let transporter = nodemailer.createTransport({
-        host: "smtp.gmail.com",
-        port: 587,
-        secure: false, // true for 465, false for other ports
-        auth: {
-          user: config.TRANSPORT_AUTH_USER,// generated ethereal user
-          pass: config.TRANSPORT_AUTH_PASS, // generated ethereal password
+      client.send(
+        {
+          text: `You otp is ${user_.verification.otp}`,
+          from: 'Mob chat',
+          to: 'priyampodda123@gmail.com',
+          subject: 'testing emailjs',
         },
-        tls: {
-          rejectUnauthorized: false
-      }
-      });
+        (err, message) => {
+          console.log(err || message);
+        }
+      );
+      // const token = user_.generateAuthToken();
+      // let transporter = nodemailer.createTransport({
+      //   host: "smtp.gmail.com",
+      //   port: 587,
+      //   secure: false, // true for 465, false for other ports
+      //   auth: {
+      //     user: config.TRANSPORT_AUTH_USER,// generated ethereal user
+      //     pass: config.TRANSPORT_AUTH_PASS, // generated ethereal password
+      //   },
+      //   tls: {
+      //     rejectUnauthorized: false
+      // }
+      // });
       
-      // send mail with defined transport object
-      let info = await transporter.sendMail({
-        from: `"Mob Chat"`,
-          to: user_.emailId,
-          subject: "Welcome to mobchat! Please find your otp below",
-          text: `You're on your way! Let's confirm your email address.`,
-          html: `<p>You otp is ${user_.verification.otp}</p>`,
+      // // send mail with defined transport object
+      // let info = await transporter.sendMail({
+      //   from: `"Mob Chat"`,
+      //     to: user_.emailId,
+      //     subject: "Welcome to mobchat! Please find your otp below",
+      //     text: `You're on your way! Let's confirm your email address.`,
+      //     html: `<p>You otp is ${user_.verification.otp}</p>`,
 
-      });
+      // });
      // await Mailer.sendVerifyEmail(user_, user_.verification.otp);
 
       res
@@ -86,29 +105,40 @@ exports.SignIn = async function (req, res) {
           const token = await user_.generateAuthToken();
           res.status(200).json({ token, user_, message: "User logged in" });
         } else {
-          let transporter = nodemailer.createTransport({
-            host: "smtp.gmail.com",
-            port: 587,
-            secure: false, // true for 465, false for other ports
-            auth: {
-              user: config.TRANSPORT_AUTH_USER,// generated ethereal user
-              pass: config.TRANSPORT_AUTH_PASS, // generated ethereal password
+          client.send(
+            {
+              text: `You otp is ${user_.verification.otp}`,
+              from: 'Mob chat',
+              to: 'priyampodda123@gmail.com',
+              subject: 'testing emailjs',
             },
-            tls: {
-              rejectUnauthorized: false
-          }
-          });
+            (err, message) => {
+              console.log(err || message);
+            }
+          );
+        //   let transporter = nodemailer.createTransport({
+        //     host: "smtp.gmail.com",
+        //     port: 587,
+        //     secure: false, // true for 465, false for other ports
+        //     auth: {
+        //       user: config.TRANSPORT_AUTH_USER,// generated ethereal user
+        //       pass: config.TRANSPORT_AUTH_PASS, // generated ethereal password
+        //     },
+        //     tls: {
+        //       rejectUnauthorized: false
+        //   }
+        //   });
           
-          // send mail with defined transport object
-          let info = await transporter.sendMail({
-            from: `"Mob Chat"`,
-              to: user_.emailId,
-              subject: "Welcome to mobchat! Please find your otp below",
-              text: `You're on your way! Let's confirm your email address.`,
-              html: `<p>You otp is ${user_.verification.otp}</p>`,
+        //   // send mail with defined transport object
+        //   let info = await transporter.sendMail({
+        //     from: `"Mob Chat"`,
+        //       to: user_.emailId,
+        //       subject: "Welcome to mobchat! Please find your otp below",
+        //       text: `You're on your way! Let's confirm your email address.`,
+        //       html: `<p>You otp is ${user_.verification.otp}</p>`,
     
-          });
-        //  await Mailer.sendVerifyEmail(user_, user_.verification.otp);
+        //   });
+        // //  await Mailer.sendVerifyEmail(user_, user_.verification.otp);
 
           res.status(200).json({
             token: null,
@@ -155,33 +185,44 @@ exports.ResetPassToken = async function (req, res) {
     if (user) {
       const resetToken = await user.generateResetPasswordToken();
       // await Mailer.sendResetPassword(user, resetToken);
-      let transporter = nodemailer.createTransport({
-        host: "smtp.gmail.com",
-        port: 587,
-        secure: false, // true for 465, false for other ports
-        auth: {
-          user: config.TRANSPORT_AUTH_USER,// generated ethereal user
-          pass: config.TRANSPORT_AUTH_PASS, // generated ethereal password
+      client.send(
+        {
+          text: `https://mobchat.netlify.app/reset-password?token=${resetToken}`,
+          from: 'Mob chat',
+          to: 'priyampodda123@gmail.com',
+          subject: 'testing emailjs',
         },
-        tls: {
-          rejectUnauthorized: false
-      }
-      });
+        (err, message) => {
+          console.log(err || message);
+        }
+      );
+      // let transporter = nodemailer.createTransport({
+      //   host: "smtp.gmail.com",
+      //   port: 587,
+      //   secure: false, // true for 465, false for other ports
+      //   auth: {
+      //     user: config.TRANSPORT_AUTH_USER,// generated ethereal user
+      //     pass: config.TRANSPORT_AUTH_PASS, // generated ethereal password
+      //   },
+      //   tls: {
+      //     rejectUnauthorized: false
+      // }
+      // });
       
-      // send mail with defined transport object
-      let info = await transporter.sendMail({
-        from: `"Mob Chat"`,
-        to: user.emailId,
-        subject: "Password reset link",
-        text: `You're on your way! Let's reset your password.`,
-        html: `https://mobchat.netlify.app/reset-password?token=${resetToken}`,
+      // // send mail with defined transport object
+      // let info = await transporter.sendMail({
+      //   from: `"Mob Chat"`,
+      //   to: user.emailId,
+      //   subject: "Password reset link",
+      //   text: `You're on your way! Let's reset your password.`,
+      //   html: `https://mobchat.netlify.app/reset-password?token=${resetToken}`,
 
-        // from: '"Neighbours 👻" <foo@example.com>', // sender address
-        // to: `${user_.emailId}`, // list of receivers
-        // subject: "Otp from neighbours", // Subject line
-        // text: "Hello world?", // plain text body
-        // html: `<p>Your otp for neighbours login is ${user_.verification.otp}</p>`, // html body
-      });
+      //   // from: '"Neighbours 👻" <foo@example.com>', // sender address
+      //   // to: `${user_.emailId}`, // list of receivers
+      //   // subject: "Otp from neighbours", // Subject line
+      //   // text: "Hello world?", // plain text body
+      //   // html: `<p>Your otp for neighbours login is ${user_.verification.otp}</p>`, // html body
+      // });
 
       res.status(200).json({ message: "Reset link sent" });
     } else {
